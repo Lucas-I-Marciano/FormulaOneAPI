@@ -25,4 +25,11 @@ I will divide my API in two main paths as intuitive as possible
   I will use "data.js" as a database in order to focus on how to build an API<br>
 
 - Order's algorithms<br>
-  Bubble sort:
+  Bubble sort: It will compare two by two the elements on the array, answering the question "Is the LEFT term greater than the RIGHT one?" - If yes, it will change the position, if not it will remain as the same. With that the greatest element will be on the last position. Example:<br>
+  <ul>
+  <li>[1,5,8,4,6] -> [1,5] -> 1<5 -> remain the same</li>
+  <li>[1,5,8,4,6] -> [5,8] -> 5<8 -> remain the same</li>
+  <li>[1,5,8,4,6] -> [8,4] -> 8>4 -> Change position -> [1,5,4,8,6]</li>
+  <li>[1,5,4,8,6] -> [8,6] -> 8>6 -> Change position -> [1,5,4,6,<b style="background-color:green">8</b>]</li>
+  </ul>
+  Problem: This algorithm has order n^2 - O(n^2) - because of tho loops, one inside another. It is easy to imagine if my array increase a lot, the performance will decrease exponentially
