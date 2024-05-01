@@ -18,12 +18,6 @@ for (let i = 0; i < initialVariable.length; i++) {
       count++;
     }
   }
-  console.log(`Contador: ${count}`);
-  if (currentTerm > previousTerm) {
-    console.log(`${currentTerm} é MAIOR que ${previousTerm}`);
-  } else {
-    console.log(`${currentTerm} é MENOR que ${previousTerm}`);
-  }
   orderObject[currentTerm] = count;
   previousTerm = currentTerm;
 }
