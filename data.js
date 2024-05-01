@@ -5,12 +5,7 @@ export const driversInRandomOrder = [
     points: 575,
     id: "8e20e33f-b840-453b-b841-d49ae331d2f7",
   },
-  {
-    name: "Sergio Perez",
-    team: "Red Bull Racing",
-    points: 285,
-    id: "cb1965ce-9c8b-4b77-b9fe-339bbb631517",
-  },
+
   {
     name: "Fernando Alonso",
     team: "Aston Martin",
@@ -125,6 +120,20 @@ export const driversInRandomOrder = [
     points: 0,
     id: "d15a9c50-5943-4be6-872f-b850914c9a80",
   },
+  {
+    name: "Sergio Perez",
+    team: "Red Bull Racing",
+    points: 285,
+    id: "cb1965ce-9c8b-4b77-b9fe-339bbb631517",
+  },
 ];
 
-driversInRandomOrder.sort(() => {});
+export const drivers = driversInRandomOrder.sort((item1, item2) => {
+  if (item1.points > item2.points) {
+    return -1; // Like move down one position on sort
+  }
+  if (item1.points < item2.points) {
+    return 1; // Like move up one position on sort
+  }
+  return 0;
+});
