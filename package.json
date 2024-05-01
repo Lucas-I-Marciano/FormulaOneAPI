@@ -1,0 +1,16 @@
+{
+  "name": "api-formula-one-2023",
+  "version": "1.0.0",
+  "description": "API project. It will delivery information about Formula 1 competition (Drivers and Constructors) (2023)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch ."
+  },
+  "author": "Lucas Ioran Marciano",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
