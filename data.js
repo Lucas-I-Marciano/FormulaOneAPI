@@ -117,7 +117,7 @@ export const driversInRandomOrder = [
   {
     name: "Nick de Vries",
     team: "AlphaTauri",
-    points: 0,
+    points: 3,
     id: "d15a9c50-5943-4be6-872f-b850914c9a80",
   },
   {
@@ -129,6 +129,42 @@ export const driversInRandomOrder = [
 ];
 
 export const drivers = driversInRandomOrder.sort((item1, item2) => {
+  if (item1.points > item2.points) {
+    return -1; // Like move down one position on sort
+  }
+  if (item1.points < item2.points) {
+    return 1; // Like move up one position on sort
+  }
+  return 0;
+});
+
+// // First time when I did team's agregation
+// const teams = [];
+
+// for (const driverObject of drivers) {
+//   const teamObject = teams.find((driver) => {
+//     return driver.team === driverObject.team;
+//   });
+//   if (teamObject) {
+//     teamObject.points += Number(driverObject.points);
+//   } else {
+//     teams.push({
+//       team: driverObject.team,
+//       points: driverObject.points,
+//     });
+//   }
+// }
+
+const teamsRandomOrder = drivers.reduce((acc, currentValue) => {
+  const { team, points } = currentValue;
+  const teamObject = acc.find((item) => {
+    return item.team === team;
+  });
+  teamObject ? (teamObject.points += points) : acc.push({ team: team, points });
+  return acc;
+}, []);
+
+export const teams = teamsRandomOrder.sort((item1, item2) => {
   if (item1.points > item2.points) {
     return -1; // Like move down one position on sort
   }
