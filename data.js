@@ -173,3 +173,26 @@ export const teams = teamsRandomOrder.sort((item1, item2) => {
   }
   return 0;
 });
+
+export const generateTeamsArray = () => {
+  return drivers
+    .reduce((acc, currentValue) => {
+      const { team, points } = currentValue;
+      const teamObject = acc.find((item) => {
+        return item.team === team;
+      });
+      teamObject
+        ? (teamObject.points += points)
+        : acc.push({ team: team, points });
+      return acc;
+    }, [])
+    .sort((item1, item2) => {
+      if (item1.points > item2.points) {
+        return -1; // Like move down one position on sort
+      }
+      if (item1.points < item2.points) {
+        return 1; // Like move up one position on sort
+      }
+      return 0;
+    });
+};

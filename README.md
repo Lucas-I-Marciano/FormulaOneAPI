@@ -37,3 +37,9 @@ I will divide my API in two main paths as intuitive as possible
 - Middleware<br>
   My request / response will go through this middleware before delivery result<br>
   I will use "express.json()"
+
+- Refractory<br>
+Adjustment made on my code to make it more clear and readable<br>
+<ul>Adjustment Made
+<li><b>inputValidation.js</b>: Separate my validation on a specific file and bring it only when needed</li>
+</ul>

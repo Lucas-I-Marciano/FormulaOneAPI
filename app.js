@@ -1,7 +1,12 @@
 import express from "express";
 import Joi from "joi";
-import { drivers, teams } from "./data.js";
+// teams is static, so in order to get the most updated value from teams, I have to export the function that will generate the team array
+import { drivers, teams, generateTeamsArray } from "./data.js";
 import { randomUUID } from "node:crypto";
+import {
+  validateDriverInfo,
+  validatePositionSchema,
+} from "./inputValidation.js";
 
 const baseRoute = "/api/v1";
 const app = express();
@@ -10,28 +15,42 @@ const app = express();
 // My request / response will go through this middleware before delivery result
 app.use(express.json());
 
+// List of constructors
+app.get(`${baseRoute}/teams`, (req, res) => {
+  res.status(200).send(generateTeamsArray());
+});
+
+// Getting the driver on the consulted position
+app.get(`${baseRoute}/teams/standings/:position`, (req, res) => {
+  const position = req.params.position; // req.params will return an object {"position" : [VALUE INFORMED ON URL]}
+  const { error } = validatePositionSchema(
+    position,
+    generateTeamsArray().length
+  );
+
+  if (error) {
+    res.status(400).send(error.message);
+    return;
+  }
+  // const {position} = req.params; // Another way to get the information
+  res.status(200).send(generateTeamsArray()[position - 1]);
+});
+
 // List of driver ordered
 app.get(`${baseRoute}/drivers`, (req, res) => {
   res.status(200).send(drivers);
 });
 
-// List of constructors
-app.get(`${baseRoute}/teams`, (req, res) => {
-  res.status(200).send(teams);
-});
-
 // Getting the driver on the consulted position
 // After ":" I can put my 'route parametrer'
 app.get(`${baseRoute}/drivers/standings/:position`, (req, res) => {
-  const positionSchema = Joi.number().min(1).max(drivers.length);
   const position = req.params.position; // req.params will return an object {"position" : [VALUE INFORMED ON URL]}
-
-  const { error } = positionSchema.validate(position);
+  const { error } = validatePositionSchema(position, drivers.length);
   if (error) {
     res.status(400).send(error.message);
     return;
   }
-  console.log(error);
+
   // const {position} = req.params; // Another way to get the information
   res.status(200).send(drivers[position - 1]);
 });
@@ -42,11 +61,7 @@ app.get(`${baseRoute}/drivers/:id`, (req, res) => {
   const selectedDriver = drivers.find((driver) => {
     return driver.id === driverId;
   });
-  console.log(
-    drivers.find((driver) => {
-      return driver.id === driverId;
-    })
-  );
+
   if (!selectedDriver) {
     res.status(404).send(`Driver not founded<br>Searched ID:<br>${driverId}`);
     return;
@@ -57,14 +72,7 @@ app.get(`${baseRoute}/drivers/:id`, (req, res) => {
 // Creating a new pilot
 app.post(`${baseRoute}/drivers`, (req, res) => {
   const newDriver = { ...req.body, id: randomUUID() };
-  const driverSchema = Joi.object({
-    name: Joi.string().min(3).max(50).required(),
-    team: Joi.string().min(3).max(50).required(),
-    points: Joi.number().min(0).max(1000).default(0),
-  });
-  const validationObject = driverSchema.validate(req.body, {
-    abortEarly: false,
-  });
+  const validationObject = validateDriverInfo(req.body);
   const { error } = validationObject;
   if (error) {
     res.status(400).send(error.message);
@@ -86,12 +94,6 @@ app.post(`${baseRoute}/drivers`, (req, res) => {
 
 // Updating informations
 app.put(`${baseRoute}/drivers/:id`, (req, res) => {
-  const driverSchema = Joi.object({
-    name: Joi.string().min(3).max(50).required(),
-    team: Joi.string().min(3).max(50).required(),
-    points: Joi.number().min(0).max(1000).default(0),
-  });
-
   const driverId = req.params.id;
   const selectedDriver = drivers.find((drive) => {
     return drive.id === driverId;
@@ -100,6 +102,7 @@ app.put(`${baseRoute}/drivers/:id`, (req, res) => {
     res.status(404).send(`Driver not founded<br>Searched ID:<br>${driverId}`);
     return;
   }
+
   const newInformation = req.body;
   for (const information in newInformation) {
     if (information in selectedDriver) {
