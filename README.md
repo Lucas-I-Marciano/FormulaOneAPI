@@ -42,4 +42,5 @@ I will divide my API in two main paths as intuitive as possible
 Adjustment made on my code to make it more clear and readable<br>
 <ul>Adjustment Made
 <li><b>inputValidation.js</b>: Separate my validation on a specific file and bring it only when needed</li>
+<li><b>Endpoint</b>: I will use each file (driver.js and team.js) as a router. If an endpoint was for /drivers, access driver.js file</li>
 </ul>
