@@ -36,7 +36,10 @@ I will divide my API in two main paths as intuitive as possible
 
 - Middleware<br>
   My request / response will go through this middleware before delivery result<br>
-  I will use "express.json()"
+  I will use "express.json()"<br>
+  For error treatment, I will create an function to delivery an standarized error's message {statusCode, description}. To do that I will create a function and use it as a Middleware:<br>
+  app.use((error, req, res, next) => {})<br>
+  And on each endpoint I will create this error (new Error()) and put "statusCode" and "description" proprieties. At the end, deliverying it inside next(<b style="color:red">err</b>)
 
 - Refractory<br>
 Adjustment made on my code to make it more clear and readable<br>

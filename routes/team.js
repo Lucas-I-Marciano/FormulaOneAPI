@@ -11,7 +11,7 @@ router.get(`/`, (req, res) => {
 });
 
 // Getting the driver on the consulted position
-router.get(`/standings/:position`, (req, res) => {
+router.get(`/standings/:position`, (req, res, next) => {
   const position = req.params.position; // req.params will return an object {"position" : [VALUE INFORMED ON URL]}
   const { error } = validatePositionSchema(
     position,
@@ -19,8 +19,10 @@ router.get(`/standings/:position`, (req, res) => {
   );
 
   if (error) {
-    res.status(400).send(error.message);
-    return;
+    const err = new Error();
+    err.statusCode = 400;
+    err.descrition = error.message;
+    return next(err);
   }
   // const {position} = req.params; // Another way to get the information
   res.status(200).send(generateTeamsArray()[position - 1]);

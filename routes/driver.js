@@ -16,12 +16,18 @@ router.get(`/`, (req, res) => {
 
 // Getting the driver on the consulted position
 // After ":" I can put my 'route parametrer'
-router.get(`/standings/:position`, (req, res) => {
+router.get(`/standings/:position`, (req, res, next) => {
   const position = req.params.position; // req.params will return an object {"position" : [VALUE INFORMED ON URL]}
   const { error } = validatePositionSchema(position, drivers.length);
   if (error) {
-    res.status(400).send(error.message);
-    return;
+    const err = new Error();
+    err.statusCode = 400;
+    err.description = error.message;
+    // As I want to use my Middleware that handle with error, I will use this Middleware (get/standing/:position) to comunicate with my error Middleware (Defined on app.js)
+    return next(err);
+    // Below the first time I was handle with error, before studying Middleware
+    // res.status(400).send(error.message);
+    // return;
   }
 
   // const {position} = req.params; // Another way to get the information
@@ -29,27 +35,37 @@ router.get(`/standings/:position`, (req, res) => {
 });
 
 // Getting information of a driver based on the id
-router.get(`/:id`, (req, res) => {
+router.get(`/:id`, (req, res, next) => {
   const driverId = req.params["id"]; // Another way to get the information
   const selectedDriver = drivers.find((driver) => {
     return driver.id === driverId;
   });
 
   if (!selectedDriver) {
-    res.status(404).send(`Driver not founded<br>Searched ID:<br>${driverId}`);
-    return;
+    const err = new Error();
+    err.statusCode = 404;
+    err.description = `Driver not founded<br>Searched ID:<br>${driverId}`;
+    return next(err);
+    // res.status(404).send(`Driver not founded<br>Searched ID:<br>${driverId}`);
+    // return;
   }
   res.status(200).send(selectedDriver);
 });
 
 // Creating a new pilot
-router.post(`/`, (req, res) => {
+router.post(`/`, (req, res, next) => {
   const newDriver = { ...req.body, id: randomUUID() };
   const validationObject = validateDriverInfo(req.body);
   const { error } = validationObject;
   if (error) {
-    res.status(400).send(error.message);
-    return;
+    const err = new Error();
+    err.statusCode = 400;
+    err.description = error.message;
+    return next(err);
+  }
+
+  if (!newDriver["points"]) {
+    newDriver["points"] = 0;
   }
 
   drivers.push(newDriver);
@@ -66,14 +82,16 @@ router.post(`/`, (req, res) => {
 });
 
 // Updating informations
-router.put(`/:id`, (req, res) => {
+router.put(`/:id`, (req, res, next) => {
   const driverId = req.params.id;
   const selectedDriver = drivers.find((drive) => {
     return drive.id === driverId;
   });
   if (!selectedDriver) {
-    res.status(404).send(`Driver not founded<br>Searched ID:<br>${driverId}`);
-    return;
+    const err = new Error();
+    err.statusCode = 404;
+    err.description = `Driver not founded<br>Searched ID:<br>${driverId}`;
+    return next(err);
   }
 
   const newInformation = req.body;
@@ -98,14 +116,16 @@ router.put(`/:id`, (req, res) => {
   res.status(200).send(selectedDriver);
 });
 
-router.delete(`/:id`, (req, res) => {
+router.delete(`/:id`, (req, res, next) => {
   const driverId = req.params.id;
   const selectedDriver = drivers.find((driver) => {
     return driver.id === driverId;
   });
   if (!selectedDriver) {
-    res.status(404).send(`Driver not founded<br>Searched ID:<br>${driverId}`);
-    return;
+    const err = new Error();
+    err.statusCode = 404;
+    err.description = `Driver not founded<br>Searched ID:<br>${driverId}`;
+    return next(err);
   }
   drivers.splice(drivers.indexOf(selectedDriver), 1);
   res.status(200).send(selectedDriver);
